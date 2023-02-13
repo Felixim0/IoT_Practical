@@ -5,6 +5,7 @@ r = sr.Recognizer() # turn on your microphone
 mic = sr.Microphone()
 with mic as source:
   r.adjust_for_ambient_noise(source) # denoise
+  print('Started Recording')
   audio = r.record(source, 2) # record 2 seconds from the microphone
   # or you can use r.listen(source) to keep listening to microphone until timeout (no voice)
   with open(f"Voice-{time_now}.wav", "wb") as f:
