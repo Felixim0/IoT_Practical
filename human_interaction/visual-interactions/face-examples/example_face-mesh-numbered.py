@@ -21,28 +21,26 @@ with mp_face_mesh.FaceMesh(
       continue
 
     # Flip the image horizontally to correct the orientation of the numbers.
-    image_flipped = cv2.flip(image, 1)
+    image = cv2.flip(image, 1)
 
     # To improve performance, optionally mark the image as not writeable to
     # pass by reference.
-    image_flipped.flags.writeable = False
-    image_flipped = cv2.cvtColor(image_flipped, cv2.COLOR_BGR2RGB)
-    results = face_mesh.process(image_flipped)
+    image.flags.writeable = False
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    results = face_mesh.process(image)
 
     # Draw the face mesh annotations on the image.
-    image_flipped.flags.writeable = True
-    image_flipped = cv2.cvtColor(image_flipped, cv2.COLOR_RGB2BGR)
+    image.flags.writeable = True
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     if results.multi_face_landmarks:
       for face_landmarks in results.multi_face_landmarks:
         # Draw the landmark numbers.
         for idx, landmark in enumerate(face_landmarks.landmark):
-            x, y = int((1 - landmark.x) * image.shape[1]), int(landmark.y * image.shape[0])
-            cv2.putText(image_flipped, str(idx), (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (255, 255, 255), 1)
+            x, y = int(landmark.x * image.shape[1]), int(landmark.y * image.shape[0])
+            cv2.putText(image, str(idx), (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (255, 255, 255), 1)
 
-    # Flip the image horizontally again to return it to its original orientation.
-    image = cv2.flip(image_flipped, 1)
-
-    cv2.imshow('MediaPipe Face Mesh', image)
+    # Flip the image horizontally for a selfie-view display.
+    cv2.imshow('MediaPipe Face Mesh', cv2.flip(image, 1))
     if cv2.waitKey(5) & 0xFF == 27:
       break
 cap.release()
